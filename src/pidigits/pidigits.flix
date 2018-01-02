@@ -6,7 +6,7 @@ namespace PIDigits {
     // This implementation is loosely based on:
     // http://benchmarksgame.alioth.debian.org/u64q/program.php?test=pidigits&lang=yarv&id=3
 
-    def ndigits(): BigInt = 10000ii
+    def ndigits(): BigInt = 1000ii
 
     def compTpl1(a2: BigInt, n1: BigInt, d1: BigInt, t1: BigInt, u: BigInt): (BigInt, BigInt) =
       let tmp = (n1 * 3ii) + a2;
@@ -30,6 +30,7 @@ namespace PIDigits {
 
     def pi(i: BigInt): BigInt = piHelper(i, 0ii, 1ii, 1ii, 0ii, 1ii, 0ii, 0ii)
 
+    @benchmark
     def pidigits(): BigInt = pi(ndigits())
 }
 

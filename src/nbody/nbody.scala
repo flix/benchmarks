@@ -1,4 +1,9 @@
+package nbody
+
 object nbody {
+
+  val WarmupRounds = 100
+  val ActualRounds = 50
 
   // n-body, from the Computer Language Benchmarks Game
   // http://benchmarksgame.alioth.debian.org/u64q/nbody-description.html#nbody
@@ -49,7 +54,7 @@ object nbody {
       val (sun4, neptune1) = advanceHelper(sun3, neptune, dt)
       val (jupiter2, saturn2) = advanceHelper(jupiter1, saturn1, dt)
       val (jupiter3, uranus2) = advanceHelper(jupiter2, uranus1, dt)
-      val (jupiter4, neptune2)  = advanceHelper(jupiter3, neptune1, dt)
+      val (jupiter4, neptune2) = advanceHelper(jupiter3, neptune1, dt)
       val (saturn3, uranus3) = advanceHelper(saturn2, uranus2, dt)
       val (saturn4, neptune3) = advanceHelper(saturn3, neptune2, dt)
       val (uranus4, neptune4) = advanceHelper(uranus3, neptune3, dt)
@@ -67,9 +72,9 @@ object nbody {
 
       val posE = sun.getEnergy + jupiter.getEnergy + saturn.getEnergy + uranus.getEnergy + neptune.getEnergy
       val negE = energyHelper(sun, jupiter) + energyHelper(sun, saturn) + energyHelper(sun, uranus) + energyHelper(sun, neptune) +
-                 energyHelper(jupiter, saturn) + energyHelper(jupiter, uranus) + energyHelper(jupiter, neptune) +
-                 energyHelper(saturn, uranus) + energyHelper(saturn, neptune) +
-                 energyHelper(uranus, neptune)
+        energyHelper(jupiter, saturn) + energyHelper(jupiter, uranus) + energyHelper(jupiter, neptune) +
+        energyHelper(saturn, uranus) + energyHelper(saturn, neptune) +
+        energyHelper(uranus, neptune)
       posE - negE
     }
 
@@ -92,7 +97,7 @@ object nbody {
     -0.0000690460016972063023 * daysPerYear,
     0.000954791938424326609 * solarMass
   )
-  val initSaturn = Body (
+  val initSaturn = Body(
     8.34336671824457987,
     4.12479856412430479,
     -0.403523417114321381,
@@ -123,35 +128,50 @@ object nbody {
 
   val initialSystem: SolarSystem = {
     val px = (initSun.vx * initSun.m) +
-             (initJupiter.vx * initJupiter.m) +
-             (initSaturn.vx * initSaturn.m) +
-             (initUranus.vx * initUranus.m) +
-             (initNeptune.vx * initNeptune.m)
+      (initJupiter.vx * initJupiter.m) +
+      (initSaturn.vx * initSaturn.m) +
+      (initUranus.vx * initUranus.m) +
+      (initNeptune.vx * initNeptune.m)
     val py = (initSun.vy * initSun.m) +
-             (initJupiter.vy * initJupiter.m) +
-             (initSaturn.vy * initSaturn.m) +
-             (initUranus.vy * initUranus.m) +
-             (initNeptune.vy * initNeptune.m)
+      (initJupiter.vy * initJupiter.m) +
+      (initSaturn.vy * initSaturn.m) +
+      (initUranus.vy * initUranus.m) +
+      (initNeptune.vy * initNeptune.m)
     val pz = (initSun.vz * initSun.m) +
-             (initJupiter.vz * initJupiter.m) +
-             (initSaturn.vz * initSaturn.m) +
-             (initUranus.vz * initUranus.m) +
-             (initNeptune.vz * initNeptune.m)
+      (initJupiter.vz * initJupiter.m) +
+      (initSaturn.vz * initSaturn.m) +
+      (initUranus.vz * initUranus.m) +
+      (initNeptune.vz * initNeptune.m)
     val sun = initSun.offsetMomentum(px, py, pz)
     SolarSystem(sun, initJupiter, initSaturn, initUranus, initNeptune)
   }
 
-  def main(args: Array[String]): Unit = {
-    val start = System.nanoTime()
+  def run(): Double = {
     val s = initialSystem
     val init = s.run(0)
-    val result = s.run(N)
-    val end = System.nanoTime()
-    val elapsed = (end - start) / 1000000
+    s.run(N)
+  }
 
-    println(s"Time: $elapsed ms")
-    println(s"Initial: $init")
-    println(s"Result:  $result")
+  def warmpup(): Unit = {
+    for (_ <- 0 until WarmupRounds) {
+      run()
+    }
+  }
+
+  def sample(): Long = {
+    var elapsed = 0L
+    for (_ <- 0 until ActualRounds) {
+      val start = System.nanoTime()
+      run()
+      val end = System.nanoTime()
+      elapsed = elapsed + (end - start)
+    }
+    elapsed / ActualRounds
+  }
+
+  def main(args: Array[String]): Unit = {
+    warmpup()
+    println(sample() / (1000 * 1000))
   }
 
 }

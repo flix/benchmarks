@@ -1,4 +1,9 @@
+package fibonacci
+
 object fibonacci {
+
+  val WarmupRounds = 100
+  val ActualRounds = 50
 
   val N: Long = 35
 
@@ -7,14 +12,28 @@ object fibonacci {
     else if (n == 1) 1
     else fib(n - 1) + fib(n - 2)
 
-  def main(args: Array[String]): Unit = {
-    val start = System.nanoTime()
-    val result = fib(N)
-    val end = System.nanoTime()
-    val elapsed = (end - start) / 1000000
+  def run(): Long = fib(N)
 
-    println(s"Time: $elapsed ms")
-    println(s"Result: $result")
+  def warmpup(): Unit = {
+    for (_ <- 0 until WarmupRounds) {
+      run()
+    }
+  }
+
+  def sample(): Long = {
+    var elapsed = 0L
+    for (_ <- 0 until ActualRounds) {
+      val start = System.nanoTime()
+      run()
+      val end = System.nanoTime()
+      elapsed = elapsed + (end - start)
+    }
+    elapsed / ActualRounds
+  }
+
+  def main(args: Array[String]): Unit = {
+    warmpup()
+    println(sample() / (1000 * 1000))
   }
 
 }

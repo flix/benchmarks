@@ -1,4 +1,9 @@
+package pidigits
+
 object pidigits {
+
+  val MaxRounds = 50
+  val WarmupRounds = 100
 
   // pidigits, from the Computer Language Benchmarks Game.
   // http://benchmarksgame.alioth.debian.org/u64q/pidigits-description.html#pidigits
@@ -6,7 +11,7 @@ object pidigits {
   // This implementation is a loose translation of the Flix program, which was loosely based on:
   // http://benchmarksgame.alioth.debian.org/u64q/program.php?test=pidigits&lang=yarv&id=3
 
-  val N: BigInt = 10000
+  val N: BigInt = 1000
 
   def compTpl1(a2: BigInt, n1: BigInt, d1: BigInt, t1: BigInt, u: BigInt): (BigInt, BigInt) = {
     val tmp = (n1 * 3) + a2
@@ -34,14 +39,28 @@ object pidigits {
 
   def pi(i: BigInt): BigInt = piHelper(i, 0, 1, 1, 0, 1, 0, 0)
 
-  def main(args: Array[String]): Unit = {
-    val start = System.nanoTime()
-    val result = pi(N)
-    val end = System.nanoTime()
-    val elapsed = (end - start) / 1000000
+  def run(): BigInt = pi(N)
 
-    println(s"Time: $elapsed ms")
-    println(s"Result: $result")
+  def warmpup(): Unit = {
+    for (_ <- 0 until WarmupRounds) {
+      run()
+    }
+  }
+
+  def sample(): Long = {
+    var elapsed = 0L
+    for (_ <- 0 until MaxRounds) {
+      val start = System.nanoTime()
+      run()
+      val end = System.nanoTime()
+      elapsed = elapsed + (end - start)
+    }
+    elapsed / MaxRounds
+  }
+
+  def main(args: Array[String]): Unit = {
+    warmpup()
+    println(sample() / (1000 * 1000))
   }
 
 }

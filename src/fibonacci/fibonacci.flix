@@ -1,5 +1,6 @@
 namespace Fibonacci {
 
+  @benchmark
   def fibonacci(): Int64 = fib(35i64)
 
   def fib(n: Int64): Int64 =

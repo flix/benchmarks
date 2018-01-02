@@ -144,6 +144,7 @@ namespace NBody {
       let sun = offsetMomentum(initSun(), px, py, pz);
       SolarSystem.S(sun, initJupiter(), initSaturn(), initUranus(), initNeptune())
 
-    def output(): (Float, Float) = (run(0), run(numSteps(0)))
+    @benchmark
+    def nbody(): (Float, Float) = (run(0), run(numSteps(0)))
 
 }
