@@ -2,8 +2,8 @@ package pidigits
 
 object pidigits {
 
-  val MaxRounds = 50
-  val WarmupRounds = 100
+  val WarmupRounds = 1000
+  val ActualRounds = 1000
 
   // pidigits, from the Computer Language Benchmarks Game.
   // http://benchmarksgame.alioth.debian.org/u64q/pidigits-description.html#pidigits
@@ -41,6 +41,7 @@ object pidigits {
 
   def run(): BigInt = pi(N)
 
+
   def warmpup(): Unit = {
     for (_ <- 0 until WarmupRounds) {
       run()
@@ -48,14 +49,31 @@ object pidigits {
   }
 
   def sample(): Long = {
-    var elapsed = 0L
-    for (_ <- 0 until MaxRounds) {
-      val start = System.nanoTime()
+    var result = List.empty[Long]
+    var i = 0
+    while (i < ActualRounds) {
+      val t = System.nanoTime()
       run()
-      val end = System.nanoTime()
-      elapsed = elapsed + (end - start)
+      val e = System.nanoTime() - t
+      i = i + 1
+      result = e :: result
     }
-    elapsed / MaxRounds
+    median(result)
+  }
+
+  def median(xs: List[Long]): Long = {
+    if (xs.isEmpty) throw new IllegalArgumentException("Empty list.")
+    if (xs.length == 1) return xs.head
+
+    val l = xs.sorted
+    val n = xs.length
+    if (n % 2 == 0) {
+      val index = n / 2
+      l(index)
+    } else {
+      val index = n / 2
+      (l(index) + l(index + 1)) / 2
+    }
   }
 
   def main(args: Array[String]): Unit = {

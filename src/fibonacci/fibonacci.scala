@@ -2,8 +2,8 @@ package fibonacci
 
 object fibonacci {
 
-  val WarmupRounds = 100
-  val ActualRounds = 50
+  val WarmupRounds = 1000
+  val ActualRounds = 1000
 
   val N: Long = 35
 
@@ -14,6 +14,7 @@ object fibonacci {
 
   def run(): Long = fib(N)
 
+
   def warmpup(): Unit = {
     for (_ <- 0 until WarmupRounds) {
       run()
@@ -21,14 +22,31 @@ object fibonacci {
   }
 
   def sample(): Long = {
-    var elapsed = 0L
-    for (_ <- 0 until ActualRounds) {
-      val start = System.nanoTime()
+    var result = List.empty[Long]
+    var i = 0
+    while (i < ActualRounds) {
+      val t = System.nanoTime()
       run()
-      val end = System.nanoTime()
-      elapsed = elapsed + (end - start)
+      val e = System.nanoTime() - t
+      i = i + 1
+      result = e :: result
     }
-    elapsed / ActualRounds
+    median(result)
+  }
+
+  def median(xs: List[Long]): Long = {
+    if (xs.isEmpty) throw new IllegalArgumentException("Empty list.")
+    if (xs.length == 1) return xs.head
+
+    val l = xs.sorted
+    val n = xs.length
+    if (n % 2 == 0) {
+      val index = n / 2
+      l(index)
+    } else {
+      val index = n / 2
+      (l(index) + l(index + 1)) / 2
+    }
   }
 
   def main(args: Array[String]): Unit = {
