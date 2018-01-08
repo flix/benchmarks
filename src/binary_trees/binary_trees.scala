@@ -1,6 +1,6 @@
 package binary_trees
 
-object BinaryTrees {
+object binary_trees {
 
   // binary_trees, from the Computer Language Benchmarks Game.
   // http://benchmarksgame.alioth.debian.org/u64q/binarytrees-description.html#binarytrees
@@ -12,7 +12,7 @@ object BinaryTrees {
   val ActualRounds = 1000
 
   val MinHeight: Int = 4
-  val MaxHeight: Int = 21
+  val MaxHeight: Int = 16
 
   sealed trait Tree
 
